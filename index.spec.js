@@ -32,3 +32,16 @@ describe('GET /users is', () => {
     });
   });
 });
+
+describe('GET /users/1 is', () => {
+  describe('success', () => {
+    it('should returns object of users which id is 1', (done) => {
+      request(app)
+        .get('/users/1')
+        .end((err, res) => {
+          res.body.should.have.property('id', 1);
+          done();
+        });
+    });
+  });
+});
