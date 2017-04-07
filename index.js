@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
-const user = [
+const users = [
   {id:1, name: 'alice'},
   {id:2, name: 'bek'},
   {id:3, name: 'chris'}
@@ -10,7 +10,12 @@ const user = [
 app.use(morgan('dev'));
 
 app.get('/users', (req, res) => {
-  res.json(user);
+  req.query.limit = req.query.limit || 10;
+  const limit = parseInt(req.query.limit, 10);
+  if (Number.isNaN(limit)) {
+    return res.status(400).end();
+  }
+  res.json(users.slice(0, limit));
 });
 
 const port = 3000;
