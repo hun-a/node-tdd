@@ -44,4 +44,20 @@ describe('GET /users/1 is', () => {
         });
     });
   });
+
+  describe('fail', () => {
+    it('should returns 400 if id was not a number', (done) => {
+      request(app)
+        .get('/users/one')
+        .expect(400)
+        .end(done);
+    });
+
+    it(`should returns 404 if there are no users matched id`, (done) => {
+      request(app)
+        .get('/users/999')
+        .expect(404)
+        .end(done);
+    });
+  });
 });
