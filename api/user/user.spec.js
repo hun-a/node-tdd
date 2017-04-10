@@ -2,10 +2,17 @@
 const request = require('supertest');
 const should = require('should');
 const app = require('../../');
+const models = require('../../models');
 
 describe('GET /users is', () => {
+  const users = [
+    {name: 'alice'}, {name: 'bek'}, {name: 'chris'}
+  ];
+  before(() => models.sequelize.sync({force: true}));
+  before(() => models.User.bulkCreate(users));
+
   describe('success', () => {
-    it('respond users value as array', (done) => {
+    it('should respond users value as array', (done) => {
       request(app)
         .get('/users')
         .end((err, res) => {
@@ -14,7 +21,7 @@ describe('GET /users is', () => {
         });
     });
 
-    it(`it returns maximum limit`, (done) => {
+    it(`should returns maximum limit`, (done) => {
       request(app)
         .get('/users?limit=2')
         .end((err, res) => {
@@ -35,6 +42,12 @@ describe('GET /users is', () => {
 });
 
 describe('GET /users/:id is', () => {
+  const users = [
+    {name: 'alice'}, {name: 'bek'}, {name: 'chris'}
+  ];
+  before(() => models.sequelize.sync({force: true}));
+  before(() => models.User.bulkCreate(users));
+
   describe('success', () => {
     it('should returns object of users which id is 1', (done) => {
       request(app)
@@ -64,6 +77,12 @@ describe('GET /users/:id is', () => {
 });
 
 describe('DELETE /users/:id', () => {
+  const users = [
+    {name: 'alice'}, {name: 'bek'}, {name: 'chris'}
+  ];
+  before(() => models.sequelize.sync({force: true}));
+  before(() => models.User.bulkCreate(users));
+
   describe('success', () => {
     it('should returns 204', (done) => {
       request(app)
@@ -84,6 +103,12 @@ describe('DELETE /users/:id', () => {
 });
 
 describe('POST /users', () => {
+  const users = [
+    {name: 'alice'}, {name: 'bek'}, {name: 'chris'}
+  ];
+  before(() => models.sequelize.sync({force: true}));
+  before(() => models.User.bulkCreate(users));
+
   describe('success', () => {
     let body, name = 'daniel';
     before(done => {
@@ -123,12 +148,18 @@ describe('POST /users', () => {
 });
 
 describe('PUT /users', () => {
+  const users = [
+    {name: 'alice'}, {name: 'bek'}, {name: 'chris'}
+  ];
+  before(() => models.sequelize.sync({force: true}));
+  before(() => models.User.bulkCreate(users));
+
   describe('success', () => {
     it('should resturns value of renamed', (done) => {
       const name = 'chally';
       request(app)
         .put('/users/3')
-        .send({name: name})
+        .send({name})
         .end((err, res) => {
           res.body.should.have.property('name', name);
           done();
@@ -151,7 +182,7 @@ describe('PUT /users', () => {
     });
     it('should returns 404 when user is not exists', (done) => {
       request(app)
-        .put('/users/1')
+        .put('/users/999')
         .send({name: 'foo'})  // dummy data
         .expect(404)
         .end(done);
